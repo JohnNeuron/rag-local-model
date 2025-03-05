@@ -1,0 +1,9 @@
+
+Vagrant.configure("2") do |config|
+  
+  config.vm.box = "ubuntu/jammy64" #Sistema operacional utilizado
+  config.vm.hostname = "app01" #Nome da VM
+  config.vm.network "private_network", ip: "192.168.56.3" #Configuração de rede
+  config.disksize.size = "4GB" #Configurando o tamanho do armazenamento do disco virtual
+  config.vm.provision "shell", path:"provision.sh" #Configurando o arquivo de provisionamento 
+end

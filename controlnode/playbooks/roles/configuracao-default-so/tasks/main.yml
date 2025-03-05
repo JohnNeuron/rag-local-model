@@ -1,0 +1,13 @@
+- name: Upgrade de todos os pacotes do S.O 
+  apt: 
+    name: '*'
+    state: latest 
+
+- name: Instalacao do GIT client
+  apt:
+    name: git
+    state: latest
+
+- name: Atualizar lista de pacotes
+  apt:
+    update_cache: yes

@@ -1,0 +1,69 @@
+---
+- name: Configurar servidor de banco de dados
+  hosts: db01
+  user: vagrant
+  become: true
+
+  vars_files:
+    - vars/main.yaml
+
+  vars:
+    dbname: "db01"
+    dbusername: "root"
+    dbpassword: "vagrantmysql"
+
+  tasks:
+    - name: Configurar hosts lab ansible
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ item }}"
+      with_items:
+        - "192.168.56.2 control-node"
+        - "192.168.56.3 app01"
+        - "192.168.56.4 db01"
+
+    - name: Permitir conexões remotas ao MySQL
+      block:
+        - name: Configurar bind-address para permitir conexões remotas
+          lineinfile:
+            path: /etc/mysql/mysql.conf.d/mysqld.cnf
+            regexp: '^bind-address'
+            line: 'bind-address = 0.0.0.0'
+            state: present
+          notify: Reiniciar MySQL
+
+        - name: Garantir que o MySQL esteja escutando na porta 3306
+          lineinfile:
+            path: /etc/mysql/mysql.conf.d/mysqld.cnf
+            regexp: '^port'
+            line: 'port = 3306'
+            state: present
+          notify: Reiniciar MySQL
+
+        - name: Conceder privilégios ao usuário root para conexões remotas
+          mysql_user:
+            name: "{{ dbusername }}"
+            host: '%'
+            password: "{{ dbpassword }}"
+            priv: '*.*:ALL,GRANT'
+            state: present
+          notify: Reiniciar MySQL
+
+        - name: Aplicar privilégios no MySQL
+          mysql_db:
+            name: "{{ dbname }}"
+            state: import
+            target: /dev/null  # Necessário para aplicar privilégios
+          notify: Reiniciar MySQL
+
+      when: ansible_os_family == "Debian"
+
+  handlers:
+    - name: Reiniciar MySQL
+      service:
+        name: mysql
+        state: restarted
+
+  roles:
+    - configuracao-default-so
+    - role: geerlingguy.mysql

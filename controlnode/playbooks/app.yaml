@@ -1,0 +1,19 @@
+---
+- name: Configurar servidor de aplicação Python  # Nome do playbook
+  hosts: app01  # Quais hosts serão realizados essa tarefa
+  user: vagrant  # Usuário que realizará
+  become: true  # Permissão Root? true
+
+  tasks:
+    - name: Configurar hosts lab ansible
+      lineinfile:
+        path: /etc/hosts  # Insere as linhas no arquivo
+        line: "{{ item }}"
+      with_items:
+        - "192.168.56.2 control-node"
+        - "192.168.56.3 app01"
+        - "192.168.56.4 db01"
+
+  roles:
+    - configuracao-default-so  # Tarefa que está no ./roles/[...]
+    - configuracao-python-gunicorn

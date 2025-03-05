@@ -1,0 +1,11 @@
+mysql_root_password: vagrantmysql
+mysql_databases: 
+  - name: estoqueProdutos 
+    encoding: latin1
+    collation: latin1_general_ci 
+
+mysql_users:
+  - name: deepapp
+    host: "%"
+    password: vagrantmysql
+    priv: "estoqueProdutos.*:ALL"

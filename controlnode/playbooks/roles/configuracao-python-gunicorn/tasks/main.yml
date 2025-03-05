@@ -1,0 +1,27 @@
+
+- name: Instalar python3-pip se não estiver presente
+  apt:
+    name: python3-pip
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Instalação de pacotes Python necessários
+  pip:
+    name:
+      - Flask
+      - flask-cors
+      - langchain
+      - langchain-community
+      - langchain-ollama
+      - ollama
+      - faiss-cpu
+      - torch
+      - torchvision
+      - torchaudio
+      - sentence-transformers
+      - gunicorn
+    state: latest
+    executable: /usr/bin/pip3
+    extra_args: "--timeout 600 --no-cache-dir"
+  become: yes

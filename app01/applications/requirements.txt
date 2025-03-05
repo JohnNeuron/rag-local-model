@@ -1,0 +1,9 @@
+flask
+flask-cors
+langchain-community
+langchain
+pdf-plumber
+huggingface_hub
+faiss-cpu
+vanna
+ollama
